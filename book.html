@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Books Buddy</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+
+    /* Logo styling */
+    .logo a {
+  font-size: 28px;      /* Make it big */
+  font-weight: 800;     /* Bold */
+  color: #ffffff;       /* White */
+  text-decoration: none;
+    }
+
+    .logo a span {
+  color: var(--primary-color); /* Keep "Cinema" in primary color */
+    }
+
+    :root {
+      --bg-color: rgb(20, 20, 20);
+      --card-color: rgb(23, 23, 23);
+      --primary-color: #ff6347;
+      --text-color: #f4f4f4;
+      --icon-color: #bbb;
+      --icon-hover: #ff6347;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+    }
+
+    header {
+      background-color: #333;
+      color: var(--text-color);
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      flex-wrap: wrap;
+    }
+
+    nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    nav ul li {
+      position: relative;
+    }
+
+    nav ul li a {
+      color: var(--text-color);
+      text-decoration: none;
+      transition: color 0.3s;
+      cursor: pointer;
+    }
+
+    nav ul li a:hover {
+      color: var(--primary-color);
+    }
+
+    .dropdown {
+      display: none;
+      position: absolute;
+      background-color: #444;
+      min-width: 180px;
+      z-index: 1000;
+      top: 100%;
+      left: 0;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .dropdown a {
+      display: block;
+      padding: 10px;
+      color: var(--text-color);
+      text-decoration: none;
+      transition: background 0.3s;
+    }
+
+    .dropdown a:hover {
+      background-color: var(--primary-color);
+    }
+
+    nav ul li:hover .dropdown {
+      display: block;
+    }
+
+    .search-bar {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      flex: 1;
+    }
+
+    .search-bar input {
+      padding: 8px;
+      border: none;
+      border-radius: 5px;
+      background-color: rgba(255, 255, 255, 0.1);
+      color: var(--text-color);
+      flex: 1;
+    }
+
+    .search-bar button {
+      padding: 8px 16px;
+      background-color: var(--primary-color);
+      color: var(--text-color);
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .search-bar button:hover {
+      background-color: #ff4500;
+    }
+
+    main {
+      padding: 20px;
+    }
+
+    .featured h2 {
+      margin-bottom: 20px;
+      font-size: 28px;
+      color: var(--primary-color);
+    }
+
+    .manhua-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .manhua-card {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      height: 300px;
+      flex-direction: column;
+      position: relative;
+      width: calc(25% - 12px);
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .manhua-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-content {
+      background-color: var(--card-color);
+      border-radius: inherit;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      inset: 1px;
+      padding: 16px;
+      position: absolute;
+      z-index: 2;
+    }
+
+    .manhua-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 5px;
+    }
+
+    .manhua-card h3 {
+      margin: 10px 0 5px;
+      font-size: 18px;
+      color: var(--text-color);
+    }
+
+    .manhua-card p {
+      margin: 0;
+      font-size: 14px;
+      color: rgba(244, 244, 244, 0.8);
+    }
+
+    .icons {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 15px;
+    }
+
+    .icons i {
+      cursor: pointer;
+      color: var(--icon-color);
+      font-size: 18px;
+      transition: color 0.3s ease, transform 0.3s ease;
+    }
+
+    .icons i:hover {
+      color: var(--icon-hover);
+      transform: scale(1.2);
+    }
+
+    footer {
+      background-color: #333;
+      color: var(--text-color);
+      text-align: center;
+      padding: 15px;
+      margin-top: 40px;
+    }
+
+    @media (max-width: 1000px) {
+      .manhua-card {
+        width: calc(33.33% - 12px);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .manhua-card {
+        width: calc(50% - 12px);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .manhua-card {
+        width: 100%;
+      }
+
+      header {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .search-bar {
+        width: 100%;
+      }
+
+      .search-bar input {
+        flex: 1;
+      }
+    }
+
+    header {
+      background-color: #333;
+      color: var(--text-color);
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between; /* keeps logo left, nav right */
+      align-items: center;
+      position: relative;
+      flex-wrap: wrap;
+      gap: 20px; /* adds spacing between flex items */
+    }
+
+  nav {
+    margin-left: 40px; /* pushes nav away from logo */
+  }
+
+  @media (max-width: 768px) {
+    header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    nav {
+      margin-left: 0; /* reset for mobile view */
+    }
+  }
+
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <a href="hackathon.html" class="logo">
+        Absolute<span>Cinema</span>
+      </a>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li>
+          <a href="#">Genres</a>
+          <div class="dropdown" id="genre-dropdown">
+            <a href="#" data-genre="all">All</a>
+            <a href="#" data-genre="action">Action</a>
+            <a href="#" data-genre="fantasy">Fantasy</a>
+            <a href="#" data-genre="romance">Romance</a>
+            <a href="#" data-genre="horror">Horror</a>
+            <a href="#" data-genre="thriller">Thriller</a>
+            <a href="#" data-genre="sci-fi">Sci-Fi</a>
+            <a href="#" data-genre="mystery">Mystery</a>
+            <a href="#" data-genre="isekai">Isekai</a>
+            <a href="#" data-genre="adventure">Adventure</a>
+            <a href="#" data-genre="shounen">Shounen</a>
+            <a href="#" data-genre="drama">Drama</a>
+          </div>
+        </li>
+        <li>
+          <a href="#">Lists</a>
+          <div class="dropdown" id="lists-dropdown">
+            <!-- Lists populated by JS -->
+          </div>
+        </li>
+        <li><a href="#">Latest</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search books...">
+      <button id="searchBtn">Search</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="featured">
+      <h2>Featured Books</h2>
+      <div class="manhua-list" id="book-list">
+        <!-- Book cards injected here -->
+      </div>
+      <p id="no-results" style="text-align:center; margin-top:20px; display:none; color:gray;">
+        No books found.
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    &copy; 2025 Books Buddy
+  </footer>
+
+  <script>
+    let allBooks = [];
+
+    // --------------------------
+    // Load Books
+    // --------------------------
+    async function loadBooks() {
+      try {
+        const response = await fetch("books.json");
+        if (!response.ok) throw new Error("HTTP error " + response.status);
+        const data = await response.json();
+        allBooks = data.books || data; // support root array or { books: [...] }
+        renderBooks(allBooks);
+      } catch (err) {
+        console.error("Error loading dataset:", err);
+      }
+    }
+
+    function renderBooks(books) {
+      const bookList = document.getElementById("book-list");
+      const noResults = document.getElementById("no-results");
+      bookList.innerHTML = "";
+
+      if (!books || books.length === 0) {
+        noResults.style.display = "block";
+        return;
+      }
+      noResults.style.display = "none";
+
+      books.forEach(book => {
+        const card = document.createElement("div");
+        card.className = "manhua-card";
+        card.innerHTML = `
+          <div class="card-content">
+            <img src="${book.image}" alt="${book.title}">
+            <h3>${book.title}</h3>
+            <p>Genre: ${book.genre}</p>
+            <div class="icons">
+              <i class="fas fa-book-open" title="Add to Reading"></i>
+              <i class="fas fa-heart" title="Add to Favourite"></i>
+              <i class="fas fa-plus" title="Add to Library"></i>
+              <i class="fas fa-share-alt" title="Share"></i>
+              <i class="fas fa-info-circle" title="Details"></i>
+            </div>
+          </div>
+        `;
+        bookList.appendChild(card);
+      });
+    }
+
+    // --------------------------
+    // Filters
+    // --------------------------
+    document.addEventListener("click", function(e) {
+      if (e.target.matches("#genre-dropdown a")) {
+        e.preventDefault();
+        const genre = e.target.getAttribute("data-genre");
+        if (genre === "all") renderBooks(allBooks);
+        else renderBooks(allBooks.filter(book => book.genre.toLowerCase().includes(genre)));
+      }
+    });
+
+    document.getElementById("searchBtn").addEventListener("click", () => {
+      const query = document.getElementById("searchInput").value.toLowerCase().trim();
+      renderBooks(allBooks.filter(book => 
+        book.title.toLowerCase().includes(query) || 
+        book.genre.toLowerCase().includes(query)
+      ));
+    });
+
+    // --------------------------
+    // Lists System
+    // --------------------------
+    let lists = {
+      "Library": [],
+      "Favourite": [],
+      "Reading": []
+    };
+
+    if (localStorage.getItem("userLists")) {
+      lists = JSON.parse(localStorage.getItem("userLists"));
+    }
+
+    function saveLists() {
+      localStorage.setItem("userLists", JSON.stringify(lists));
+    }
+
+    function addBookToList(book, listName) {
+      if (!lists[listName]) lists[listName] = [];
+      if (!lists[listName].some(b => b.title === book.title)) {
+        lists[listName].push(book);
+        saveLists();
+        alert(`"${book.title}" added to ${listName}`);
+        populateListsDropdown("lists-dropdown");
+      }
+    }
+
+    function getBooksFromList(listName) {
+      return lists[listName] || [];
+    }
+
+    function showList(listName) {
+      const books = getBooksFromList(listName);
+      renderBooks(books);
+    }
+
+    function createCustomList(name) {
+      if (!name) return;
+      if (!lists[name]) {
+        lists[name] = [];
+        saveLists();
+        alert(`List "${name}" created!`);
+        populateListsDropdown("lists-dropdown");
+      } else alert(`List "${name}" already exists!`);
+    }
+
+    function promptNewList() {
+      const name = prompt("Enter new list name:");
+      if (name) createCustomList(name);
+    }
+
+    function populateListsDropdown(dropdownId) {
+      const dropdown = document.getElementById(dropdownId);
+      if (!dropdown) return;
+
+      dropdown.innerHTML = "";
+
+      for (let listName in lists) {
+        const a = document.createElement("a");
+        a.href = "#";
+        a.textContent = listName;
+        a.addEventListener("click", e => {
+          e.preventDefault();
+          showList(listName);
+        });
+        dropdown.appendChild(a);
+      }
+
+      const plus = document.createElement("a");
+      plus.href = "#";
+      plus.textContent = "+ Create List";
+      plus.style.fontWeight = "bold";
+      plus.addEventListener("click", e => {
+        e.preventDefault();
+        promptNewList();
+      });
+      dropdown.appendChild(plus);
+    }
+
+    // --------------------------
+    // Add book to list via card icons
+    // --------------------------
+    document.addEventListener("click", function(e) {
+      const card = e.target.closest(".manhua-card");
+      if (!card) return;
+
+      const title = card.querySelector("h3").textContent;
+      const genre = card.querySelector("p").textContent.replace("Genre: ", "");
+      const image = card.querySelector("img").src;
+      const book = { title, genre, image };
+
+      if (e.target.classList.contains("fa-heart")) addBookToList(book, "Favourite");
+      if (e.target.classList.contains("fa-plus")) addBookToList(book, "Library");
+      if (e.target.classList.contains("fa-book-open")) addBookToList(book, "Reading");
+    });
+
+    document.addEventListener("DOMContentLoaded", function() {
+      loadBooks();
+      populateListsDropdown("lists-dropdown");
+    });
+  </script>
+</body>
+</html>

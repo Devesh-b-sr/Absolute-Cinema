@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trending TV Shows</title>
+  <!-- Font Awesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    /* CSS Styling */
+    :root {
+      --bg-color: #f4f4f4;
+      --text-color: #333;
+      --header-bg: #333;
+      --header-text: #fff;
+      --card-bg: #fff;
+      --card-shadow: rgba(0, 0, 0, 0.1);
+      --icon-color: #555;
+      --icon-hover: #e50914;
+    }
+
+    [data-theme="dark"] {
+      --bg-color: #1a1a1a;
+      --text-color: #f4f4f4;
+      --header-bg: #000;
+      --header-text: #fff;
+      --card-bg: #333;
+      --card-shadow: rgba(255, 255, 255, 0.1);
+      --icon-color: #bbb;
+      --icon-hover: #ff3d3d;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    header {
+      background-color: var(--header-bg);
+      color: var(--header-text);
+      padding: 20px;
+      text-align: center;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      margin: 0;
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .search-bar input {
+      padding: 10px;
+      width: 300px;
+      border: none;
+      border-radius: 5px;
+      background-color: var(--card-bg);
+      color: var(--text-color);
+      transition: box-shadow 0.3s;
+    }
+
+    .search-bar input:focus {
+      outline: none;
+      box-shadow: 0 0 5px var(--icon-hover);
+    }
+
+    .search-bar button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background-color: #e50914;
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .search-bar button:hover {
+      background-color: #ff3d3d;
+    }
+
+    .theme-toggle {
+      background: none;
+      border: none;
+      color: var(--header-text);
+      cursor: pointer;
+      font-size: 1.5rem;
+      transition: transform 0.3s;
+    }
+
+    .theme-toggle:hover {
+      transform: scale(1.1);
+    }
+
+    .shows-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .show-card {
+      background-color: var(--card-bg);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px var(--card-shadow);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .show-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 16px var(--card-shadow);
+    }
+
+    .show-card img {
+      width: 100%;
+      height: auto;
+      transition: transform 0.3s ease;
+    }
+
+    .show-card:hover img {
+      transform: scale(1.1);
+    }
+
+    .show-card h3 {
+      padding: 10px;
+      margin: 0;
+      text-align: center;
+      transition: color 0.3s ease;
+    }
+
+    .show-card:hover h3 {
+      color: var(--icon-hover);
+    }
+
+    .show-card .icons {
+      display: flex;
+      justify-content: space-around;
+      padding: 10px;
+      background-color: var(--header-bg);
+    }
+
+    .show-card .icons i {
+      cursor: pointer;
+      color: var(--icon-color);
+      transition: color 0.3s ease, transform 0.3s ease;
+    }
+
+    .show-card .icons i:hover {
+      color: var(--icon-hover);
+      transform: scale(1.2);
+    }
+
+    .logo {
+    font-size: 1.4rem;
+    color: var(--text-color);
+    font-weight: 600;
+    text-transform: uppercase;
+    margin: 0 auto 0 0;
+}
+  </style>
+</head>
+<body>
+  <!-- HTML Structure -->
+  <header>
+    <h1>Trending TV Shows</h1>
+    <div class="search-bar">
+      <input type="text" placeholder="Search for shows..." id="search-input">
+      <button id="search-button"><i class="fas fa-search"></i></button>
+    </div>
+    <button class="theme-toggle" id="theme-toggle">
+      <i class="fas fa-moon"></i>
+    </button>
+  </header>
+
+  <main>
+    <div class="shows-grid" id="shows-grid">
+      <!-- Trending shows will be dynamically added here -->
+    </div>
+  </main>
+
+  <script>
+    // JavaScript for Dynamic Content
+    const showsGrid = document.getElementById('shows-grid');
+    const themeToggle = document.getElementById('theme-toggle');
+    const body = document.body;
+
+    // Sample data for trending shows
+    const trendingShows = [
+      {
+        title: "Dark",
+        image: "https://w0.peakpx.com/wallpaper/671/421/HD-wallpaper-dark-huawei-iphone-motorola-movie-netflix-show-samsung-sony-tv-series-xiaomi-thumbnail.jpg",
+      },
+      {
+        title: "Peaky Blinders",
+        image: "https://preview.redd.it/f6hldkswe1881.jpg?auto=webp&s=610896aaf3e217cc6a00013b35043fa40e790abd",
+      },
+      {
+        title: "Breaking Bad",
+        image: "https://rukminim2.flixcart.com/image/850/1000/xif0q/poster/r/v/f/medium-breaking-bad-on-fine-art-paper-hd-quality-wallpaper-original-imah34veyrvbpfar.jpeg?q=90&crop=false",
+      },
+      {
+        title: "Money Heist",
+        image: "https://lh3.googleusercontent.com/proxy/fiT07Bor-8La7sIEOzt2mkU4Z6k3zNHHzPTrBwFRNU9nNX-wehduCDZlrJjgi3CJWf4Vdw7nTl-ngZmc1FlvUsK4ZeBs4ubVZ1z_hYhCagXhK_9MpX9-yRCou3p5zEcRr1JYWjdB3-KDC1y5eHPnFtg4d09W1PTomWIVmGq_",
+      },
+      {
+        title: "The Boys",
+        image: "https://wallpapercat.com/w/full/a/1/c/16170-1080x1920-samsung-full-hd-the-boys-wallpaper-image.jpg",
+      },
+      {
+        title: "Paatal Lok",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR88CKzuG2t0QLXzVtMY8JEDkEzuP26HFG15Q&s",
+      },
+      {
+        title: "Mirzapur",
+        image: "https://i.pinimg.com/736x/a8/f8/52/a8f8524a995fa5cc76647a5b3b34cb7c.jpg",
+      },
+      {
+        title: "Farzi",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGyAgMP53tjgPB0TWch-aPVPMPy-z1XYBfXDrlNcp3z5T0jV_UlB3dhI6fh5YGHkzkJbM&usqp=CAU",
+      },
+    ];
+
+    // Function to display shows
+    function displayShows(shows) {
+      showsGrid.innerHTML = ''; // Clear existing content
+      shows.forEach((show) => {
+        const showCard = document.createElement('div');
+        showCard.classList.add('show-card');
+
+        const showImage = document.createElement('img');
+        showImage.src = show.image;
+        showImage.alt = show.title;
+
+        const showTitle = document.createElement('h3');
+        showTitle.textContent = show.title;
+
+        // Icons for actions (e.g., play, like, add to watchlist, share, info)
+        const icons = document.createElement('div');
+        icons.classList.add('icons');
+        icons.innerHTML = `
+          <i class="fas fa-play" title="Play"></i>
+          <i class="fas fa-heart" title="Like"></i>
+          <i class="fas fa-plus" title="Add to Watchlist"></i>
+          <i class="fas fa-share-alt" title="Share"></i>
+          <i class="fas fa-info-circle" title="Details"></i>
+        `;
+
+        showCard.appendChild(showImage);
+        showCard.appendChild(showTitle);
+        showCard.appendChild(icons);
+        showsGrid.appendChild(showCard);
+      });
+    }
+
+    // Display trending shows on page load
+    displayShows(trendingShows);
+
+    // Search functionality
+    const searchInput = document.getElementById('search-input');
+    const searchButton = document.getElementById('search-button');
+
+    searchButton.addEventListener('click', () => {
+      const searchTerm = searchInput.value.toLowerCase();
+      const filteredShows = trendingShows.filter((show) =>
+        show.title.toLowerCase().includes(searchTerm)
+      );
+      displayShows(filteredShows);
+    });
+
+    // Dark mode toggle
+    themeToggle.addEventListener('click', () => {
+      body.classList.toggle('dark-mode');
+      const isDarkMode = body.classList.contains('dark-mode');
+      themeToggle.innerHTML = isDarkMode ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+      body.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+    });
+  </script>
+</body>
+</html>

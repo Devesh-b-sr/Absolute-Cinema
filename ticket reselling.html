@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movie Booking Page</title>
+  <style>
+    /* General Styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f8f9fa;
+      color: #333;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    body.dark-mode {
+      background-color: #121212;
+      color: #ffffff;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background-color: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    body.dark-mode header {
+      background-color: #1f1f1f;
+      color: #ffffff;
+    }
+
+    header .logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: #ff6f61;
+    }
+
+    header nav a {
+      margin: 0 10px;
+      text-decoration: none;
+      color: #333;
+      transition: color 0.3s;
+    }
+
+    body.dark-mode header nav a {
+      color: #ffffff;
+    }
+
+    header nav a:hover {
+      color: #ff6f61;
+    }
+
+    /* Dark Mode Toggle */
+    .dark-mode-toggle {
+      background: #ff6f61;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+
+    /* Movie List */
+    .movie-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .movie-card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      width: 300px;
+      overflow: hidden;
+      transition: transform 0.3s ease, background-color 0.3s, color 0.3s;
+    }
+
+    body.dark-mode .movie-card {
+      background: #1f1f1f;
+      color: #ffffff;
+    }
+
+    .movie-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .movie-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .movie-card h3 {
+      margin: 15px;
+      font-size: 1.2rem;
+      color: inherit;
+    }
+
+    .movie-card p {
+      margin: 0 15px 15px;
+      color: inherit;
+    }
+
+    .movie-card button {
+      display: block;
+      width: 90%;
+      margin: 10px auto;
+      padding: 10px;
+      background: #ff6f61;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .movie-card button:hover {
+      background: #ff4a3d;
+    }
+
+    /* Theater List */
+    .theater-list {
+      margin-top: 20px;
+    }
+
+    .theater-card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      padding: 15px;
+      margin-bottom: 10px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    body.dark-mode .theater-card {
+      background: #1f1f1f;
+      color: #ffffff;
+    }
+
+    .theater-card h4 {
+      margin: 0 0 10px;
+      color: inherit;
+    }
+
+    .theater-card p {
+      margin: 0 0 10px;
+      color: inherit;
+    }
+
+    .showtime-list {
+      display: flex;
+      gap: 10px;
+    }
+
+    .showtime-list button {
+      padding: 8px 12px;
+      background: #4a90e2;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .showtime-list button:hover {
+      background: #357abd;
+    }
+
+    /* Seat Layout */
+    .seat-layout {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .seat-layout h3 {
+      margin-bottom: 10px;
+    }
+
+    .seat-row {
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+      margin-bottom: 10px;
+    }
+
+    .seat {
+      width: 30px;
+      height: 30px;
+      background: #4a90e2;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .seat.selected {
+      background: #ff6f61;
+    }
+
+    .seat.occupied {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    /* Footer */
+    footer {
+      background: #333;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+      margin-top: 40px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    body.dark-mode footer {
+      background: #1f1f1f;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header>
+
+    <a href="hackathon.html" class="logo">
+      Absolute<span>Cinema</span>
+    </a>
+
+    <nav>
+      <a href="#">Movies</a>
+      <a href="#">Events</a>
+      <a href="#">Plays</a>
+      <a href="#">Sports</a>
+    </nav>
+    <button class="dark-mode-toggle" onclick="toggleDarkMode()">Dark Mode</button>
+  </header>
+
+  <!-- Main Content -->
+  <div class="container">
+    <!-- Movie List -->
+    <div class="movie-list">
+      <!-- Movie Card 1 -->
+      <div class="movie-card">
+        <img src="https://i0.wp.com/weeklyvoice.com/wp-content/uploads/2025/02/202502043318483.png" alt="Movie Poster">
+        <h3>Crazxy</h3>
+        <p>Genre: Drama , Thriller | Language: Hindi | Duration: 2h 30m</p>
+        <button onclick="showTheaters('Movie Title 1')">Book Tickets</button>
+      </div>
+      <!-- Movie Card 2 -->
+      <div class="movie-card">
+        <img src="https://pbs.twimg.com/media/GYNm3WwW8AA4X3I?format=jpg&name=4096x4096" alt="Movie Poster">
+        <h3>Thunderbolts*</h3>
+        <p>Genre: Action , Adventure , Sci-fi , Superhero | Language: English , Hindi | Duration: 2h</p>
+        <button onclick="showTheaters('Movie Title 2')">Book Tickets</button>
+      </div>
+
+      <div class="movie-card">
+        <img
+          src="https://preview.redd.it/mickey-17-2025-textless-v0-61nsa14hi5ud1.jpeg?auto=webp&s=df52ea766ca027dad6f3236398f2d1d21f5569b5"
+          alt="Movie Poster">
+        <h3>Mickey 17</h3>
+        <p>Genre: Adventure , Sci-fi , Fantasy| Language: English , Hindi | Duration: 2h</p>
+        <button onclick="showTheaters('Movie Title 2')">Book Tickets</button>
+      </div>
+
+      <div class="movie-card">
+        <img src="https://media5.bollywoodhungama.in/wp-content/uploads/2024/11/Baaghi-4-322x402.jpg"
+          alt="Movie Poster">
+        <h3>Baaghi 4 </h3>
+        <p>Genre: Action , Thriller | Language: English , Hindi | Duration: 2h</p>
+        <button onclick="showTheaters('Movie Title 2')">Book Tickets</button>
+      </div>
+
+    </div>
+
+    <!-- Theater List -->
+    <div class="theater-list" id="theater-list">
+      <!-- Theater cards will be dynamically added here -->
+    </div>
+
+    <!-- Seat Layout -->
+    <div class="seat-layout" id="seat-layout">
+      <h3>Select Your Seats</h3>
+      <div id="seats-container"></div>
+    </div>
+  </div>
+
+  <script>
+    // Sample data for theaters and showtimes
+    const theaters = [
+      {
+        movie: "Movie Title 1",
+        name: "Theater A",
+        location: "Chandigarh",
+        showtimes: ["10:00 AM", "1:00 PM", "4:00 PM"]
+      },
+      {
+        movie: "Movie Title 1",
+        name: "Theater B",
+        location: "Chandigarh",
+        showtimes: ["11:00 AM", "2:00 PM", "5:00 PM"]
+      },
+      {
+        movie: "Movie Title 2",
+        name: "Theater C",
+        location: "Chandigarh",
+        showtimes: ["12:00 PM", "3:00 PM", "6:00 PM"]
+      }
+    ];
+
+    // Function to display theaters for a selected movie
+    function showTheaters(movieTitle) {
+      const theaterList = document.getElementById("theater-list");
+      theaterList.innerHTML = ""; // Clear previous content
+
+      // Filter theaters for the selected movie
+      const filteredTheaters = theaters.filter(theater => theater.movie === movieTitle);
+
+      if (filteredTheaters.length === 0) {
+        theaterList.innerHTML = "<p>No showtimes available for this movie.</p>";
+        return;
+      }
+
+      // Create theater cards
+      filteredTheaters.forEach(theater => {
+        const theaterCard = document.createElement("div");
+        theaterCard.className = "theater-card";
+        theaterCard.innerHTML = `
+          <h4>${theater.name}</h4>
+          <p>${theater.location}</p>
+          <div class="showtime-list">
+            ${theater.showtimes.map(time => `<button onclick="showSeatLayout('${theater.name}', '${time}')">${time}</button>`).join("")}
+          </div>
+        `;
+        theaterList.appendChild(theaterCard);
+      });
+    }
+
+    // Function to display seat layout
+    function showSeatLayout(theaterName, showtime) {
+      const seatLayout = document.getElementById("seat-layout");
+      const seatsContainer = document.getElementById("seats-container");
+
+      // Clear previous seat layout
+      seatsContainer.innerHTML = "";
+
+      // Create seat layout
+      const rows = ["A", "B", "C", "D", "E"];
+      rows.forEach(row => {
+        const seatRow = document.createElement("div");
+        seatRow.className = "seat-row";
+        for (let i = 1; i <= 10; i++) {
+          const seat = document.createElement("div");
+          seat.className = "seat";
+          seat.textContent = `${row}${i}`;
+          seat.addEventListener("click", () => toggleSeatSelection(seat));
+          seatRow.appendChild(seat);
+        }
+        seatsContainer.appendChild(seatRow);
+      });
+
+      // Show seat layout section
+      seatLayout.style.display = "block";
+    }
+
+    // Function to toggle seat selection
+    function toggleSeatSelection(seat) {
+      if (!seat.classList.contains("occupied")) {
+        seat.classList.toggle("selected");
+      }
+    }
+
+    // Dark Mode Toggle
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark-mode");
+    }
+  </script>
+</body>
+
+</html>

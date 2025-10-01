@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Absolute Cinema - Movies Buddy</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+
+    .logo a {
+  font-size: 28px;      /* Make it big */
+  font-weight: 800;     /* Bold */
+  color: #ffffff;       /* White */
+  text-decoration: none;
+    }
+
+    .logo a span {
+  color: var(--primary-color); /* Keep "Cinema" in primary color */
+    }
+
+    :root {
+      --bg-color: rgb(20, 20, 20);
+      --card-color: rgb(23, 23, 23);
+      --primary-color: #ff6347;
+      --text-color: #f4f4f4;
+      --icon-color: #bbb;
+      --icon-hover: #ff6347;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+    }
+
+    header {
+      background-color: #333;
+      color: var(--text-color);
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      flex-wrap: wrap;
+    }
+
+    nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    nav ul li {
+      position: relative;
+    }
+
+    nav ul li a {
+      color: var(--text-color);
+      text-decoration: none;
+      transition: color 0.3s;
+      cursor: pointer;
+    }
+
+    nav ul li a:hover {
+      color: var(--primary-color);
+    }
+
+    .dropdown {
+      display: none;
+      position: absolute;
+      background-color: #444;
+      min-width: 220px;
+      z-index: 1000;
+      top: 100%;
+      left: 0;
+      border-radius: 5px;
+      overflow: hidden;
+      padding: 10px;
+    }
+
+    .dropdown h4 {
+      margin: 10px 0 5px;
+      color: var(--primary-color);
+      font-size: 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 3px;
+    }
+
+    .dropdown a {
+      display: block;
+      padding: 8px;
+      color: var(--text-color);
+      text-decoration: none;
+      transition: background 0.3s;
+      font-size: 14px;
+    }
+
+    .dropdown a:hover {
+      background-color: var(--primary-color);
+    }
+
+    nav ul li:hover .dropdown {
+      display: block;
+    }
+
+    .search-bar {
+      display: flex;
+      gap: 10px;
+    }
+
+    .search-bar input {
+      padding: 8px;
+      border: none;
+      border-radius: 5px;
+      background-color: rgba(255, 255, 255, 0.1);
+      color: var(--text-color);
+    }
+
+    .search-bar button {
+      padding: 8px 16px;
+      background-color: var(--primary-color);
+      color: var(--text-color);
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .search-bar button:hover {
+      background-color: #ff4500;
+    }
+
+    main {
+      padding: 20px;
+    }
+
+    .featured h2 {
+      margin-bottom: 20px;
+      font-size: 28px;
+      color: var(--primary-color);
+    }
+
+    .industry-filter {
+      text-align:center;
+      margin-bottom:20px;
+    }
+
+    .industry-filter button {
+      background: var(--card-color);
+      color: var(--text-color);
+      border: none;
+      padding: 8px 16px;
+      margin: 0 5px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .industry-filter button:hover {
+      background: var(--primary-color);
+    }
+
+    .movie-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .movie-card {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  width: calc(25% - 12px);
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+  height: auto; /* Make height dynamic */
+}
+
+.movie-card img {
+  width: 100%;
+  height: auto; /* Show full poster */
+  border-radius: 5px 5px 0 0;
+}
+
+.card-content {
+  background-color: var(--card-color);
+  border-radius: 0 0 10px 10px; /* Only bottom corners */
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  position: relative;
+  z-index: 2;
+}
+
+
+    .movie-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    }
+
+  
+    
+
+    .movie-card h3 {
+      margin: 10px 0 5px;
+      font-size: 18px;
+      color: var(--text-color);
+    }
+
+    .movie-card p {
+      margin: 0;
+      font-size: 14px;
+      color: rgba(244, 244, 244, 0.8);
+    }
+
+    .icons {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 15px;
+    }
+
+    .icons i {
+      cursor: pointer;
+      color: var(--icon-color);
+      font-size: 18px;
+      transition: color 0.3s ease, transform 0.3s ease;
+    }
+
+    .icons i:hover {
+      color: var(--icon-hover);
+      transform: scale(1.2);
+    }
+
+    footer {
+      background-color: #333;
+      color: var(--text-color);
+      text-align: center;
+      padding: 15px;
+      margin-top: 40px;
+    }
+
+    @media (max-width: 1000px) {
+      .movie-card { width: calc(33.33% - 12px); }
+    }
+
+    @media (max-width: 768px) {
+      .movie-card { width: calc(50% - 12px); }
+    }
+
+    @media (max-width: 480px) {
+      .movie-card { width: 100%; }
+      header { flex-direction: column; gap: 10px; }
+      .search-bar { width: 100%; }
+      .search-bar input { flex: 1; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <a href="hackathon.html" class="logo">Absolute<span>Cinema</span></a>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="#" class="industry-tab" data-industry="all">All Movies</a></li>
+        <li><a href="#" class="industry-tab" data-industry="Bollywood">Bollywood</a></li>
+        <li><a href="#" class="industry-tab" data-industry="Hollywood">Hollywood</a></li>
+        <li>
+          <a href="#">Genres</a>
+          <div class="dropdown" id="genre-dropdown">
+            <a href="#" data-genre="all">All</a>
+            <a href="#" data-genre="action">Action</a>
+            <a href="#" data-genre="drama">Drama</a>
+            <a href="#" data-genre="thriller">Thriller</a>
+            <a href="#" data-genre="sci-fi">Sci-Fi</a>
+            <a href="#" data-genre="fantasy">Fantasy</a>
+            <a href="#" data-genre="horror">Horror</a>
+            <a href="#" data-genre="romance">Romance</a>
+            <a href="#" data-genre="mystery">Mystery</a>
+          </div>
+        </li>
+        <li>
+          <a href="#">Lists</a>
+          <div class="dropdown" id="lists-dropdown">
+            <h4>Watching List</h4>
+            <div id="watching-list">
+              <p style="padding:5px; color:gray;">No movies added</p>
+            </div>
+            <h4>Favourites</h4>
+            <div id="favourites-list">
+              <p style="padding:5px; color:gray;">No movies added</p>
+            </div>
+            <h4>Completed</h4>
+            <div id="completed-list">
+              <p style="padding:5px; color:gray;">No movies added</p>
+            </div>
+            <h4>Custom Lists</h4>
+            <div id="custom-lists">
+              <p style="padding:5px; color:gray;">No lists yet</p>
+            </div>
+            <a href="#" id="add-custom-list">+ Create New List</a>
+          </div>
+        </li>
+      </ul>
+    </nav>
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search movies...">
+      <button id="searchBtn">Search</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="featured">
+      <h2>Featured Movies</h2>
+      <div class="industry-filter">
+        <button class="industry-btn" data-industry="all">All Movies</button>
+        <button class="industry-btn" data-industry="Bollywood">Bollywood</button>
+        <button class="industry-btn" data-industry="Hollywood">Hollywood</button>
+      </div>
+      <div class="movie-list" id="movie-list"></div>
+      <p id="no-results" style="text-align:center; margin-top:20px; display:none; color:gray;">
+        No movies found.
+      </p>
+    </section>
+  </main>
+
+  <script>
+    let allMovies = [];
+    let lists = { watching: [], favourites: [], completed: [], custom: {} };
+
+    fetch('movies.json')
+      .then(response => response.json())
+      .then(data => {
+        allMovies = data;
+        renderMovies(allMovies);
+      })
+      .catch(err => {
+        console.error("Error loading movies.json:", err);
+        document.getElementById("no-results").style.display = "block";
+        document.getElementById("no-results").textContent = "Failed to load movie data.";
+      });
+
+    function renderMovies(movies) {
+      const movieList = document.getElementById("movie-list");
+      const noResults = document.getElementById("no-results");
+      movieList.innerHTML = "";
+      if (movies.length === 0) { noResults.style.display = "block"; return; }
+      noResults.style.display = "none";
+
+      movies.forEach(movie => {
+        const card = document.createElement("div");
+        card.className = "movie-card";
+        card.innerHTML = `
+          <div class="card-content">
+            <img src="${movie.image}" alt="${movie.title}">
+            <h3>${movie.title}</h3>
+            <p>Genre: ${movie.genre}</p>
+            <div class="icons">
+              <i class="fas fa-plus" title="Add to Watching" data-title="${movie.title}" data-link="${movie.link}" data-action="watching"></i>
+              <i class="fas fa-heart" title="Add to Favourites" data-title="${movie.title}" data-link="${movie.link}" data-action="favourites"></i>
+              <i class="fas fa-check" title="Mark Completed" data-title="${movie.title}" data-link="${movie.link}" data-action="completed"></i>
+              <i class="fas fa-folder-plus" title="Add to Custom List" data-title="${movie.title}" data-link="${movie.link}" data-action="custom"></i>
+              <a href="${movie.link}" target="_blank"><i class="fas fa-info-circle" title="Details"></i></a>
+            </div>
+          </div>
+        `;
+        card.addEventListener("click", function(e) {
+          if (e.target.closest(".icons")) return;
+          if (movie.link && movie.link.trim() !== "") window.open(movie.link, "_blank");
+        });
+        movieList.appendChild(card);
+      });
+    }
+
+    document.addEventListener("click", function(e) {
+      if (e.target.matches(".icons i")) {
+        const action = e.target.getAttribute("data-action");
+        const title = e.target.getAttribute("data-title");
+        const link = e.target.getAttribute("data-link");
+
+        if (action === "watching" && !lists.watching.some(m => m.title === title)) lists.watching.push({ title, link });
+        if (action === "favourites" && !lists.favourites.some(m => m.title === title)) lists.favourites.push({ title, link });
+        if (action === "completed" && !lists.completed.some(m => m.title === title)) lists.completed.push({ title, link });
+        if (action === "custom") {
+          let listName = prompt("Enter custom list name:");
+          if (listName) {
+            if (!lists.custom[listName]) lists.custom[listName] = [];
+            if (!lists.custom[listName].some(m => m.title === title)) lists.custom[listName].push({ title, link });
+          }
+        }
+        updateLists();
+      }
+
+      if (e.target.id === "add-custom-list") {
+        e.preventDefault();
+        let newList = prompt("Enter new custom list name:");
+        if (newList && !lists.custom[newList]) { lists.custom[newList] = []; updateLists(); }
+      }
+
+      if (e.target.matches("#genre-dropdown a")) {
+        e.preventDefault();
+        const genre = e.target.getAttribute("data-genre");
+        if (genre === "all") renderMovies(allMovies);
+        else renderMovies(allMovies.filter(movie => movie.genre.toLowerCase().includes(genre)));
+      }
+
+      if (e.target.matches(".industry-tab, .industry-btn")) {
+        e.preventDefault();
+        const industry = e.target.getAttribute("data-industry");
+        if (industry === "all") renderMovies(allMovies);
+        else renderMovies(allMovies.filter(movie => movie.industry.toLowerCase() === industry.toLowerCase()));
+      }
+    });
+
+    document.getElementById("searchBtn").addEventListener("click", () => {
+      const query = document.getElementById("searchInput").value.toLowerCase().trim();
+      renderMovies(allMovies.filter(movie => movie.title.toLowerCase().includes(query) ||
+                                             movie.genre.toLowerCase().includes(query) ||
+                                             movie.industry.toLowerCase().includes(query)));
+    });
+
+    function updateLists() {
+      function updateSection(id, items) {
+        const section = document.getElementById(id);
+        section.innerHTML = "";
+        if (!items || items.length === 0) {
+          section.innerHTML = "<p style='padding:5px; color:gray;'>No movies added</p>";
+          return;
+        }
+        items.forEach(item => {
+          const entry = document.createElement("a");
+          entry.href = item.link;
+          entry.target = "_blank";
+          entry.textContent = item.title;
+          section.appendChild(entry);
+        });
+      }
+
+      updateSection("watching-list", lists.watching);
+      updateSection("favourites-list", lists.favourites);
+      updateSection("completed-list", lists.completed);
+
+      const customDiv = document.getElementById("custom-lists");
+      customDiv.innerHTML = "";
+      if (Object.keys(lists.custom).length === 0) {
+        customDiv.innerHTML = "<p style='padding:5px; color:gray;'>No lists yet</p>";
+      } else {
+        for (let name in lists.custom) {
+          const header = document.createElement("h5");
+          header.style.color = "#ffb347";
+          header.style.margin = "5px 0";
+          header.textContent = name;
+          customDiv.appendChild(header);
+
+          if (lists.custom[name].length === 0) {
+            const empty = document.createElement("p");
+            empty.style.color = "gray";
+            empty.style.padding = "5px";
+            empty.textContent = "No movies added";
+            customDiv.appendChild(empty);
+          } else {
+            lists.custom[name].forEach(item => {
+              const entry = document.createElement("a");
+              entry.href = item.link;
+              entry.target = "_blank";
+              entry.textContent = item.title;
+              customDiv.appendChild(entry);
+            });
+          }
+        }
+      }
+    }
+  </script>
+</body>
+</html>

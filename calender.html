@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Calendar with Interactive Time Picker</title>
+    <style>
+        /* Reset CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212; /* Dark background */
+            color: #e0e0e0; /* Light text */
+            padding: 20px;
+        }
+
+        .calendar {
+            background: #1e1e1e; /* Dark container */
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background-color: #333; /* Dark header */
+            color: #fff;
+        }
+
+        .header button {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .header button:hover {
+            opacity: 0.8;
+        }
+
+        .header select {
+            background: #333;
+            border: none;
+            color: #fff;
+            font-size: 1em;
+            padding: 4px;
+            border-radius: 4px;
+        }
+
+        .weekdays, .days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            padding: 8px;
+        }
+
+        .weekdays div {
+            text-align: center;
+            font-weight: bold;
+            padding: 8px;
+            color: #007bff; /* Accent color for weekdays */
+        }
+
+        .days {
+            background-color: #2c2c2c; /* Darker background for days */
+        }
+
+        .days div {
+            text-align: center;
+            padding: 12px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background-color 0.3s, color 0.3s;
+            position: relative;
+            min-height: 80px;
+            border: 1px solid #444;
+        }
+
+        .days div:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .days .empty {
+            background-color: transparent;
+            cursor: default;
+            pointer-events: none;
+            border: none;
+        }
+
+        .days .today {
+            background-color: #007bff;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .days .past {
+            color: #666; /* Gray for past dates */
+            pointer-events: none; /* Disable interaction with past dates */
+        }
+
+        .days .event {
+            background-color: #4caf50; /* Green for days with events */
+            color: #fff;
+        }
+
+        .days .event:hover::after {
+            content: attr(data-event);
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: #fff;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .event-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #333;
+            padding: 16px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+            display: none;
+            width: 300px;
+        }
+
+        .event-popup h3 {
+            margin-bottom: 12px;
+            color: #fff;
+        }
+
+        .event-popup input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 8px;
+            border: none;
+            border-radius: 4px;
+            background-color: #444;
+            color: #fff;
+        }
+
+        .time-picker {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .time-picker select {
+            width: 48%;
+            padding: 8px;
+            border: none;
+            border-radius: 4px;
+            background-color: #444;
+            color: #fff;
+        }
+
+        .event-popup button {
+            padding: 8px 16px;
+            background-color: #007bff;
+            border: none;
+            color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 8px;
+        }
+
+        .event-popup button.delete {
+            background-color: #ff4d4d; /* Red for delete button */
+            display: none; /* Hide delete button by default */
+        }
+
+        .event-popup button:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="calendar">
+        <!-- Header with Month/Year and Navigation Buttons -->
+        <div class="header">
+            <button id="prevMonth">&lt;</button>
+            <div>
+                <select id="monthSelect"></select>
+                <select id="yearSelect"></select>
+            </div>
+            <button id="nextMonth">&gt;</button>
+        </div>
+
+        <!-- Weekdays -->
+        <div class="weekdays">
+            <div>Sun</div>
+            <div>Mon</div>
+            <div>Tue</div>
+            <div>Wed</div>
+            <div>Thu</div>
+            <div>Fri</div>
+            <div>Sat</div>
+        </div>
+
+        <!-- Days -->
+        <div class="days" id="days"></div>
+    </div>
+
+    <!-- Event Popup -->
+    <div class="event-popup" id="eventPopup">
+        <h3 id="popupDate"></h3>
+        <input type="text" id="eventInput" placeholder="Enter event">
+        <div class="time-picker">
+            <select id="hours">
+                <!-- Hours will be populated dynamically -->
+            </select>
+            <select id="minutes">
+                <!-- Minutes will be populated dynamically -->
+            </select>
+        </div>
+        <button id="saveEvent">Save</button>
+        <button id="deleteEvent" class="delete">Delete</button>
+        <button id="closePopup">Close</button>
+    </div>
+
+    <script>
+        const daysElement = document.getElementById('days');
+        const monthSelect = document.getElementById('monthSelect');
+        const yearSelect = document.getElementById('yearSelect');
+        const prevMonthButton = document.getElementById('prevMonth');
+        const nextMonthButton = document.getElementById('nextMonth');
+        const eventPopup = document.getElementById('eventPopup');
+        const popupDate = document.getElementById('popupDate');
+        const eventInput = document.getElementById('eventInput');
+        const hoursSelect = document.getElementById('hours');
+        const minutesSelect = document.getElementById('minutes');
+        const saveEventButton = document.getElementById('saveEvent');
+        const deleteEventButton = document.getElementById('deleteEvent');
+        const closePopupButton = document.getElementById('closePopup');
+
+        let currentDate = new Date();
+        let events = JSON.parse(localStorage.getItem('events')) || {}; // Load events from localStorage
+
+        // TMDb API Key (replace with your own API key)
+        const apiKey = 'YOUR_TMDB_API_KEY'; // Get your API key from https://www.themoviedb.org/settings/api
+
+        // Populate month and year dropdowns
+        const months = [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+
+        function populateDropdowns() {
+            // Populate months
+            months.forEach((month, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = month;
+                if (index === currentDate.getMonth()) {
+                    option.selected = true;
+                }
+                monthSelect.appendChild(option);
+            });
+
+            // Populate years (current year - 30 to current year + 30)
+            const currentYear = currentDate.getFullYear();
+            for (let year = currentYear - 30; year <= currentYear + 30; year++) {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                if (year === currentYear) {
+                    option.selected = true;
+                }
+                yearSelect.appendChild(option);
+            }
+        }
+
+        // Populate hours and minutes dropdowns
+        function populateTimePicker() {
+            // Populate hours (00 to 23)
+            for (let i = 0; i < 24; i++) {
+                const option = document.createElement('option');
+                option.value = String(i).padStart(2, '0');
+                option.textContent = String(i).padStart(2, '0');
+                hoursSelect.appendChild(option);
+            }
+
+            // Populate minutes (00 to 59)
+            for (let i = 0; i < 60; i++) {
+                const option = document.createElement('option');
+                option.value = String(i).padStart(2, '0');
+                option.textContent = String(i).padStart(2, '0');
+                minutesSelect.appendChild(option);
+            }
+        }
+
+        // Render the calendar
+        function renderCalendar() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+
+            // Update the header with the current month and year
+            monthSelect.value = month;
+            yearSelect.value = year;
+
+            // Get the first and last day of the month
+            const firstDayOfMonth = new Date(year, month, 1);
+            const lastDayOfMonth = new Date(year, month + 1, 0);
+            const daysInMonth = lastDayOfMonth.getDate();
+            const startDay = firstDayOfMonth.getDay();
+
+            // Clear the days container
+            daysElement.innerHTML = '';
+
+            // Add empty placeholders for days before the first day of the month
+            for (let i = 0; i < startDay; i++) {
+                daysElement.innerHTML += `<div class="empty"></div>`;
+            }
+
+            // Add the days of the month
+            for (let i = 1; i <= daysInMonth; i++) {
+                const dayElement = document.createElement('div');
+                dayElement.textContent = i;
+
+                // Highlight today's date
+                const today = new Date();
+                if (year === today.getFullYear() && month === today.getMonth() && i === today.getDate()) {
+                    dayElement.classList.add('today');
+                }
+
+                // Highlight past dates
+                const date = new Date(year, month, i);
+                if (date < today && !(year === today.getFullYear() && month === today.getMonth() && i === today.getDate())) {
+                    dayElement.classList.add('past');
+                }
+
+                // Fetch movies and TV shows for this date
+                const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+                fetchMoviesAndShows(dateKey, dayElement);
+
+                // Add user events
+                const eventKey = `${year}-${month + 1}-${i}`;
+                if (events[eventKey]) {
+                    dayElement.classList.add('event');
+                    dayElement.setAttribute('data-event', `🎬 ${events[eventKey].event}\n⏰ ${events[eventKey].time}`);
+                }
+
+                // Add click event to open popup (only for future or current dates)
+                if (!dayElement.classList.contains('past')) {
+                    dayElement.addEventListener('click', () => openPopup(eventKey, dayElement));
+                }
+
+                daysElement.appendChild(dayElement);
+            }
+        }
+
+        // Fetch movies and TV shows for a specific date
+        async function fetchMoviesAndShows(dateKey, dayElement) {
+            const moviesUrl = `https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&language=en-US&sort_by=release_date.asc&include_adult=false&include_video=false&page=1&primary_release_date.gte=${dateKey}&primary_release_date.lte=${dateKey}`;
+            const showsUrl = `https://api.themoviedb.org/3/discover/tv?api_key=${apiKey}&language=en-US&sort_by=first_air_date.asc&include_adult=false&include_video=false&page=1&first_air_date.gte=${dateKey}&first_air_date.lte=${dateKey}`;
+
+            try {
+                const [moviesResponse, showsResponse] = await Promise.all([
+                    fetch(moviesUrl),
+                    fetch(showsUrl),
+                ]);
+
+                const moviesData = await moviesResponse.json();
+                const showsData = await showsResponse.json();
+
+                // Add movies and shows to the day element
+                if (moviesData.results.length > 0 || showsData.results.length > 0) {
+                    dayElement.classList.add('event');
+                    dayElement.setAttribute('data-event', `🎬 ${moviesData.results.length} Movies\n📺 ${showsData.results.length} Shows`);
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        // Open popup for user events
+        function openPopup(eventKey, dayElement) {
+            eventPopup.style.display = 'block';
+            popupDate.textContent = new Date(eventKey).toLocaleDateString();
+            eventInput.value = events[eventKey]?.event || '';
+            hoursSelect.value = events[eventKey]?.time?.split(':')[0] || '00';
+            minutesSelect.value = events[eventKey]?.time?.split(':')[1] || '00';
+
+            // Show delete button only if an event exists
+            if (events[eventKey]) {
+                deleteEventButton.style.display = 'inline-block';
+            } else {
+                deleteEventButton.style.display = 'none';
+            }
+
+            saveEventButton.onclick = () => {
+                const eventText = eventInput.value.trim();
+                const eventTimeValue = `${hoursSelect.value}:${minutesSelect.value}`;
+
+                if (eventText) {
+                    events[eventKey] = { event: eventText, time: eventTimeValue };
+                    dayElement.classList.add('event');
+                    dayElement.setAttribute('data-event', `🎬 ${eventText}\n⏰ ${eventTimeValue}`);
+                } else {
+                    delete events[eventKey];
+                    dayElement.classList.remove('event');
+                    dayElement.removeAttribute('data-event');
+                }
+
+                localStorage.setItem('events', JSON.stringify(events));
+                eventPopup.style.display = 'none';
+            };
+
+            deleteEventButton.onclick = () => {
+                delete events[eventKey];
+                dayElement.classList.remove('event');
+                dayElement.removeAttribute('data-event');
+                localStorage.setItem('events', JSON.stringify(events));
+                eventPopup.style.display = 'none';
+            };
+
+            closePopupButton.onclick = () => {
+                eventPopup.style.display = 'none';
+            };
+        }
+
+        // Event listeners for month and year dropdowns
+        monthSelect.addEventListener('change', () => {
+            currentDate.setMonth(parseInt(monthSelect.value));
+            renderCalendar();
+        });
+
+        yearSelect.addEventListener('change', () => {
+            currentDate.setFullYear(parseInt(yearSelect.value));
+            renderCalendar();
+        });
+
+        // Event listeners for previous and next month buttons
+        prevMonthButton.addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar();
+        });
+
+        nextMonthButton.addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar();
+        });
+
+        // Populate dropdowns and render the calendar on page load
+        populateDropdowns();
+        populateTimePicker();
+        renderCalendar();
+    </script>
+</body>
+</html>
